@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7f8fa;
+  --foreground: #1f2937;
+  --panel-blue: #e2f1fb;
+  --brand-green: #4caf50;
+  --brand-green-dark: #3f9142;
+  --brand-lime: #b7d94c;
+  --card-border: #eceef1;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-panel-blue: var(--panel-blue);
+  --color-brand-green: var(--brand-green);
+  --color-brand-lime: var(--brand-lime);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Segoe UI", ui-sans-serif, system-ui, Arial, Helvetica, sans-serif;
+}
+
+.footer-gradient {
+  background: linear-gradient(90deg, var(--brand-green-dark) 0%, var(--brand-lime) 100%);
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-fade-in { animation: fade-in 0.15s ease-out; }
+.animate-pop-in { animation: pop-in 0.18s ease-out; }
