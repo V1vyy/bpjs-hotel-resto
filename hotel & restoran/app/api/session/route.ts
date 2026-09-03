@@ -1,12 +1,8 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { ADMIN_USERNAME, ADMIN_PASSWORD } from "@/lib/auth";
 
 const SESSION_COOKIE = "sips_session";
-
-// NOTE: this is a demo/stand-in auth flow — any non-empty username +
-// password combination is accepted and stored in a signed-less cookie.
-// Swap this out for real credential checking against a database/identity
-// provider before shipping to production.
 
 export async function GET() {
   const cookieStore = await cookies();
@@ -27,6 +23,10 @@ export async function POST(request: Request) {
   }
   if (!password || typeof password !== "string") {
     return NextResponse.json({ error: "Isi sandi Terlebih dahulu*" }, { status: 400 });
+  }
+
+  if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+    return NextResponse.json({ error: "Nama atau sandi salah*" }, { status: 401 });
   }
 
   const response = NextResponse.json({ ok: true, username });

@@ -12,7 +12,6 @@ interface FormState {
   area: string;
   jenisResto: string;
   bintang: string;
-  rating: string;
   telepon: string;
   alamat: string;
   googleMapsUrl: string;
@@ -24,12 +23,14 @@ const EMPTY_FORM: FormState = {
   area: "",
   jenisResto: "",
   bintang: "",
-  rating: "",
   telepon: "",
   alamat: "",
   googleMapsUrl: "",
   gambar: "",
 };
+
+const MAX_PHOTO_SIZE = 2 * 1024 * 1024; // 2MB
+const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
 
 export function TambahDataForm() {
   const router = useRouter();
@@ -45,6 +46,7 @@ export function TambahDataForm() {
   const [loading, setLoading] = useState(false);
   const [loadingRecord, setLoadingRecord] = useState(isEditing);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [photoError, setPhotoError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -61,7 +63,6 @@ export function TambahDataForm() {
           area: "area" in data ? data.area : "",
           jenisResto: "jenisResto" in data ? data.jenisResto : "",
           bintang: String(data.bintang ?? ""),
-          rating: String(data.rating ?? ""),
           telepon: data.telepon,
           alamat: data.alamat,
           googleMapsUrl: data.googleMapsUrl,
@@ -84,6 +85,20 @@ export function TambahDataForm() {
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setPhotoError("Format foto harus PNG, JPG, JPEG, atau WEBP");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_PHOTO_SIZE) {
+      setPhotoError("Ukuran foto maksimal 2MB");
+      e.target.value = "";
+      return;
+    }
+
+    setPhotoError(null);
     const reader = new FileReader();
     reader.onload = () => {
       updateField("gambar", String(reader.result));
@@ -94,13 +109,33 @@ export function TambahDataForm() {
   function validate(): boolean {
     const nextErrors: Partial<Record<keyof FormState, string>> = {};
     const namaLabel = kind === "hotel" ? "Nama Hotel" : "Nama Restoran";
-    if (!form.nama.trim()) nextErrors.nama = `Isi ${namaLabel.toLowerCase()} terlebih dahulu*`;
-    if (kind === "hotel" && !form.area) nextErrors.area = "Pilih area terlebih dahulu*";
+    if (!form.nama.trim()) nextErrors.nama = `Isi ${namaLabel.toLowerCase()} terlebih dahulu`;
+    if (kind === "hotel" && !form.area) nextErrors.area = "Pilih area terlebih dahulu";
     if (kind === "restoran" && !form.jenisResto)
-      nextErrors.jenisResto = "Pilih jenis restoran terlebih dahulu*";
-    if (!form.alamat.trim()) {
-      nextErrors.alamat = `Isi alamat ${kind === "hotel" ? "hotel" : "restoran"} terlebih dahulu*`;
+      nextErrors.jenisResto = "Pilih jenis restoran terlebih dahulu";
+
+    const teleponDigits = form.telepon.trim();
+    if (!teleponDigits) {
+      nextErrors.telepon = "Isi nomor telepon terlebih dahulu";
+    } else if (!/^\d{7,13}$/.test(teleponDigits)) {
+      nextErrors.telepon = "Nomor telepon harus 7-13 digit angka";
     }
+
+    if (!form.alamat.trim()) {
+      nextErrors.alamat = `Isi alamat ${kind === "hotel" ? "hotel" : "restoran"} terlebih dahulu`;
+    }
+
+    const mapsUrl = form.googleMapsUrl.trim();
+    if (!mapsUrl) {
+      nextErrors.googleMapsUrl = "Isi URL alamat terlebih dahulu";
+    } else {
+      try {
+        new URL(mapsUrl);
+      } catch {
+        nextErrors.googleMapsUrl = "URL alamat tidak valid";
+      }
+    }
+
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   }
@@ -138,11 +173,12 @@ export function TambahDataForm() {
 
   function handleSuccessOk() {
     setShowSuccess(false);
-    const base = kind === "hotel" ? "/" : "/restoran";
+    const base = kind === "hotel" ? "/admin/hotel" : "/admin/restoran";
     const message = isEditing
       ? `${kind === "hotel" ? "Hotel" : "Restoran"} berhasil diubah!`
       : `${kind === "hotel" ? "Hotel" : "Restoran"} berhasil ditambahkan!`;
     router.push(`${base}?toast=${encodeURIComponent(message)}`);
+    router.refresh();
   }
 
   function handleCancel() {
@@ -227,22 +263,11 @@ export function TambahDataForm() {
           )}
 
           <Field
-            label="Rating"
-            value={form.rating}
-            onChange={(v) => updateField("rating", v)}
-            type="number"
-            min={0}
-            max={5}
-            step="0.1"
-            className={inputClass}
-            errorClassName={errorInputClass}
-          />
-
-          <Field
             label="Telepon"
             value={form.telepon}
             onChange={(v) => updateField("telepon", v)}
             placeholder="0812 xxxx xxxx"
+            error={errors.telepon}
             className={inputClass}
             errorClassName={errorInputClass}
           />
@@ -261,6 +286,7 @@ export function TambahDataForm() {
             value={form.googleMapsUrl}
             onChange={(v) => updateField("googleMapsUrl", v)}
             placeholder="https://maps.app.goo.gl/..."
+            error={errors.googleMapsUrl}
             className={inputClass}
             errorClassName={errorInputClass}
           />
@@ -270,7 +296,7 @@ export function TambahDataForm() {
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
               onChange={handlePhotoChange}
               className="hidden"
             />
@@ -289,6 +315,10 @@ export function TambahDataForm() {
                 <PlusIcon />
               )}
             </button>
+            <p className="mt-1 text-xs text-gray-400">
+              Format PNG, JPG, JPEG, atau WEBP. Maksimal 2MB.
+            </p>
+            {photoError && <p className="mt-1 text-sm text-red-500">{photoError}</p>}
           </div>
 
           {submitError && <p className="text-sm text-red-500">{submitError}</p>}
@@ -324,6 +354,40 @@ export function TambahDataForm() {
   );
 }
 
+function ErrorTooltip({
+  message,
+  children,
+}: {
+  message?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="relative">
+      {children}
+      {message && (
+        <div className="absolute left-0 top-[calc(100%+10px)] z-20 w-max max-w-[280px]">
+          <div className="absolute -top-1.5 left-4 h-3 w-3 rotate-45 rounded-[2px] bg-white shadow-sm" />
+          <div className="relative flex items-center gap-2 rounded-lg bg-white px-3 py-2 shadow-lg">
+            <WarningIcon />
+            <span className="text-sm text-gray-700">{message}</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function WarningIcon() {
+  return (
+    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-orange-500">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M6 3v3.5" stroke="white" strokeWidth="1.6" strokeLinecap="round" />
+        <circle cx="6" cy="8.4" r="0.9" fill="white" />
+      </svg>
+    </span>
+  );
+}
+
 function Field({
   label,
   value,
@@ -350,18 +414,16 @@ function Field({
   return (
     <div>
       <label className="mb-1 block text-sm font-medium text-gray-700">{label}</label>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={error || placeholder}
-        className={cn(
-          className,
-          error && errorClassName,
-          error && "text-red-500 placeholder:text-red-500 placeholder:font-medium"
-        )}
-        {...rest}
-      />
+      <ErrorTooltip message={error}>
+        <input
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className={cn(className, error && errorClassName)}
+          {...rest}
+        />
+      </ErrorTooltip>
     </div>
   );
 }
@@ -388,21 +450,22 @@ function SelectField({
   return (
     <div>
       <label className="mb-1 block text-sm font-medium text-gray-700">{label}</label>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className={cn(className, error && errorClassName, !value && "text-gray-400")}
-      >
-        <option value="" disabled>
-          Pilih {label.toLowerCase()}
-        </option>
-        {options.map((option) => (
-          <option key={option} value={option} className="text-gray-800">
-            {renderOption ? renderOption(option) : option}
+      <ErrorTooltip message={error}>
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={cn(className, error && errorClassName, !value && "text-gray-400")}
+        >
+          <option value="" disabled>
+            Pilih {label.toLowerCase()}
           </option>
-        ))}
-      </select>
-      {error && <p className="mt-1 text-xs font-medium text-red-500">{error}</p>}
+          {options.map((option) => (
+            <option key={option} value={option} className="text-gray-800">
+              {renderOption ? renderOption(option) : option}
+            </option>
+          ))}
+        </select>
+      </ErrorTooltip>
     </div>
   );
 }

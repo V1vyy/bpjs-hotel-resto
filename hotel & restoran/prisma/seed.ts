@@ -1,12 +1,9 @@
-import type { Hotel, Restoran, Pengajuan } from "@/types";
+import { PrismaClient } from "@prisma/client";
 
-// NOTE: This is placeholder/demo data so the UI has something to render.
-// Replace `getHotels` / `getRestorans` with real API or database calls
-// (see lib/api.ts for where to wire that up) when the backend is ready.
+const prisma = new PrismaClient();
 
-const DEFAULT_HOTELS: Hotel[] = [
+const DEFAULT_HOTELS = [
   {
-    id: "hotel-tentrem-1",
     nama: "Hotel Tentrem Yogyakarta",
     gambar: "/images/hotel-tentrem.jpg",
     rating: 4.8,
@@ -17,10 +14,9 @@ const DEFAULT_HOTELS: Hotel[] = [
     googleMapsUrl: "https://maps.google.com/?q=Hotel+Tentrem+Yogyakarta",
   },
   {
-    id: "hotel-tentrem-2",
     nama: "Hotel Tentrem Yogyakarta",
     gambar: "/images/hotel-tentrem.jpg",
-    rating: 4.8, 
+    rating: 4.8,
     bintang: 5,
     area: "Dalam Kota",
     telepon: "0812 xxxx xxxx",
@@ -28,7 +24,6 @@ const DEFAULT_HOTELS: Hotel[] = [
     googleMapsUrl: "https://maps.google.com/?q=Hotel+Tentrem+Yogyakarta",
   },
   {
-    id: "hotel-tentrem-3",
     nama: "Hotel Tentrem Yogyakarta",
     gambar: "/images/hotel-tentrem.jpg",
     rating: 4.8,
@@ -39,7 +34,6 @@ const DEFAULT_HOTELS: Hotel[] = [
     googleMapsUrl: "https://maps.google.com/?q=Hotel+Tentrem+Yogyakarta",
   },
   {
-    id: "hotel-tentrem-4",
     nama: "Hotel Tentrem Yogyakarta",
     gambar: "/images/hotel-tentrem.jpg",
     rating: 4.8,
@@ -50,7 +44,6 @@ const DEFAULT_HOTELS: Hotel[] = [
     googleMapsUrl: "https://maps.google.com/?q=Hotel+Tentrem+Yogyakarta",
   },
   {
-    id: "hotel-tentrem-5",
     nama: "Hotel Tentrem Yogyakarta",
     gambar: "/images/hotel-tentrem.jpg",
     rating: 4.8,
@@ -61,7 +54,6 @@ const DEFAULT_HOTELS: Hotel[] = [
     googleMapsUrl: "https://maps.google.com/?q=Hotel+Tentrem+Yogyakarta",
   },
   {
-    id: "hotel-tentrem-6",
     nama: "Hotel Tentrem Yogyakarta",
     gambar: "/images/hotel-tentrem.jpg",
     rating: 4.8,
@@ -73,9 +65,8 @@ const DEFAULT_HOTELS: Hotel[] = [
   },
 ];
 
-const DEFAULT_RESTORANS: Restoran[] = [
+const DEFAULT_RESTORANS = [
   {
-    id: "resto-tempo-1",
     nama: "Tempo Gelato Prawirotaman",
     gambar: "/images/resto-tempo.jpg",
     rating: 4.8,
@@ -87,7 +78,6 @@ const DEFAULT_RESTORANS: Restoran[] = [
     googleMapsUrl: "https://maps.google.com/?q=Tempo+Gelato+Prawirotaman",
   },
   {
-    id: "resto-tempo-2",
     nama: "Tempo Gelato Prawirotaman",
     gambar: "/images/resto-tempo.jpg",
     rating: 4.8,
@@ -99,7 +89,6 @@ const DEFAULT_RESTORANS: Restoran[] = [
     googleMapsUrl: "https://maps.google.com/?q=Tempo+Gelato+Prawirotaman",
   },
   {
-    id: "resto-tempo-3",
     nama: "Tempo Gelato Prawirotaman",
     gambar: "/images/resto-tempo.jpg",
     rating: 4.8,
@@ -111,7 +100,6 @@ const DEFAULT_RESTORANS: Restoran[] = [
     googleMapsUrl: "https://maps.google.com/?q=Tempo+Gelato+Prawirotaman",
   },
   {
-    id: "resto-tempo-4",
     nama: "Tempo Gelato Prawirotaman",
     gambar: "/images/resto-tempo.jpg",
     rating: 4.8,
@@ -123,7 +111,6 @@ const DEFAULT_RESTORANS: Restoran[] = [
     googleMapsUrl: "https://maps.google.com/?q=Tempo+Gelato+Prawirotaman",
   },
   {
-    id: "resto-tempo-5",
     nama: "Tempo Gelato Prawirotaman",
     gambar: "/images/resto-tempo.jpg",
     rating: 4.8,
@@ -135,7 +122,6 @@ const DEFAULT_RESTORANS: Restoran[] = [
     googleMapsUrl: "https://maps.google.com/?q=Tempo+Gelato+Prawirotaman",
   },
   {
-    id: "resto-tempo-6",
     nama: "Tempo Gelato Prawirotaman",
     gambar: "/images/resto-tempo.jpg",
     rating: 4.8,
@@ -148,25 +134,25 @@ const DEFAULT_RESTORANS: Restoran[] = [
   },
 ];
 
-// Store the mutable arrays on globalThis so every module (API routes,
-// server components) shares the exact same in-memory instance, even across
-// Turbopack/dev-server hot-reload module re-evaluation.
-const globalForData = globalThis as unknown as {
-  __hotels?: Hotel[];
-  __restorans?: Restoran[];
-  __pengajuans?: Pengajuan[];
-};
+async function main() {
+  console.log("Seeding hotels...");
+  for (const hotel of DEFAULT_HOTELS) {
+    await prisma.hotel.create({ data: hotel });
+  }
 
-export const hotels: Hotel[] = globalForData.__hotels ?? DEFAULT_HOTELS;
-globalForData.__hotels = hotels;
+  console.log("Seeding restorans...");
+  for (const restoran of DEFAULT_RESTORANS) {
+    await prisma.restoran.create({ data: restoran });
+  }
+ 
+  console.log("Seeding selesai!");
+}
 
-export const restorans: Restoran[] = globalForData.__restorans ?? DEFAULT_RESTORANS;
-globalForData.__restorans = restorans;
-
-export const pengajuans: Pengajuan[] = globalForData.__pengajuans ?? [];
-globalForData.__pengajuans = pengajuans;
-
-export const areaOptions = ["Dalam Kota", "Selatan", "Barat", "Utara"] as const;
-export const bintangOptions = [5, 4, 3, 2, 1] as const;
-export const makananOptions = ["Makanan Berat", "Makanan Ringan"] as const;
-export const minumanOptions = ["Hangat", "Dingin"] as const;
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

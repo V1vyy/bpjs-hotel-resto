@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Hotel {
+  id            String   @id @default(cuid())
+  nama          String
+  gambar        String
+  rating        Float
+  bintang       Int
+  area          String
+  telepon       String
+  alamat        String
+  googleMapsUrl String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Restoran {
+  id            String   @id @default(cuid())
+  nama          String
+  gambar        String
+  rating        Float
+  bintang       Int
+  jenisResto    String
+  jenisMinuman  String?
+  telepon       String
+  alamat        String
+  googleMapsUrl String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Pengajuan {
+  id            String   @id @default(cuid())
+  kind          String   // "hotel" | "restoran"
+  status        String   @default("pending")
+  nama          String
+  area          String?
+  jenisResto    String?
+  jenisMinuman  String?
+  bintang       Int
+  telepon       String
+  alamat        String
+  googleMapsUrl String
+  gambar        String
+  createdAt     DateTime @default(now())
+}

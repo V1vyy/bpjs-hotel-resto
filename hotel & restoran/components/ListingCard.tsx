@@ -4,13 +4,13 @@ import { RatingBadge } from "@/components/RatingBadge";
 export function ListingCard({
   nama,
   gambar,
-  rating,
+  bintang,
   googleMapsUrl,
   onDetail,
 }: {
   nama: string;
   gambar: string;
-  rating: number;
+  bintang: number;
   googleMapsUrl: string;
   onDetail: () => void;
 }) {
@@ -27,15 +27,16 @@ export function ListingCard({
       </div>
       <div className="space-y-2 p-3">
         <h3 className="truncate text-sm font-semibold text-gray-900">{nama}</h3>
-        <RatingBadge rating={rating} />
+        <RatingBadge rating={bintang} />
         <div className="flex gap-2 pt-1">
-          <button
+                    <button
             type="button"
             onClick={onDetail}
             className="flex-1 rounded-md bg-gray-100 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-200"
           >
             Detail
           </button>
+          
           <a
             href={googleMapsUrl}
             target="_blank"

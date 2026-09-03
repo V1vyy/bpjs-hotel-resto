@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") ?? "/tambah-data";
+  const redirectTo = searchParams.get("redirect") ?? "/admin/hotel";
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -19,8 +19,8 @@ export function LoginForm() {
     e.preventDefault();
 
     const nextErrors: { username?: string; password?: string } = {};
-    if (!username.trim()) nextErrors.username = "Isi nama Terlebih dahulu*";
-    if (!password.trim()) nextErrors.password = "Isi sandi Terlebih dahulu*";
+    if (!username.trim()) nextErrors.username = "Isi nama terlebih dahulu";
+    if (!password.trim()) nextErrors.password = "Isi sandi terlebih dahulu";
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
@@ -32,11 +32,10 @@ export function LoginForm() {
         body: JSON.stringify({ username, password }),
       });
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error ?? "Login gagal");
-      }
-      router.push(redirectTo);
-      router.refresh();
+  const data = await res.json().catch(() => ({}));
+  throw new Error(data.error ?? "Login gagal");
+}
+window.location.href = redirectTo;
     } catch (err) {
       setErrors({
         password: err instanceof Error ? err.message : "Login gagal",
@@ -60,38 +59,37 @@ export function LoginForm() {
         <label htmlFor="username" className="sr-only">
           Nama
         </label>
-        <input
-          id="username"
-          value={username}
-          onChange={(e) => {
-            setUsername(e.target.value);
-            if (errors.username) setErrors((prev) => ({ ...prev, username: undefined }));
-          }}
-          placeholder={errors.username || "Nama"}
-          className={cn(
-            inputClass,
-            "bg-white",
-            errors.username && "text-red-500 placeholder:text-red-500 placeholder:font-medium"
-          )}
-        />
+        <ErrorTooltip message={errors.username}>
+          <input
+            id="username"
+            value={username}
+            onChange={(e) => {
+              setUsername(e.target.value);
+              if (errors.username) setErrors((prev) => ({ ...prev, username: undefined }));
+            }}
+            placeholder="Nama"
+            className={cn(inputClass, "bg-white")}
+          />
+        </ErrorTooltip>
       </div>
 
       <div>
         <label htmlFor="password" className="sr-only">
           Sandi
         </label>
-        <PasswordInput
-          id="password"
-          name="password"
-          value={password}
-          onChange={(next) => {
-            setPassword(next);
-            if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
-          }}
-          placeholder="Sandi"
-          error={errors.password}
-          className={cn(inputClass, "bg-white")}
-        />
+        <ErrorTooltip message={errors.password}>
+          <PasswordInput
+            id="password"
+            name="password"
+            value={password}
+            onChange={(next) => {
+              setPassword(next);
+              if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+            }}
+            placeholder="Sandi"
+            className={cn(inputClass, "bg-white")}
+          />
+        </ErrorTooltip>
       </div>
 
       <div className="flex gap-3 pt-1">
@@ -111,5 +109,39 @@ export function LoginForm() {
         </button>
       </div>
     </form>
+  );
+}
+
+function ErrorTooltip({
+  message,
+  children,
+}: {
+  message?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="relative">
+      {children}
+      {message && (
+        <div className="absolute left-0 top-[calc(100%+10px)] z-20 w-max max-w-[280px]">
+          <div className="absolute -top-1.5 left-4 h-3 w-3 rotate-45 rounded-[2px] bg-white shadow-sm" />
+          <div className="relative flex items-center gap-2 rounded-lg bg-white px-3 py-2 shadow-lg">
+            <WarningIcon />
+            <span className="text-sm text-gray-700">{message}</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function WarningIcon() {
+  return (
+    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-orange-500">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M6 3v3.5" stroke="white" strokeWidth="1.6" strokeLinecap="round" />
+        <circle cx="6" cy="8.4" r="0.9" fill="white" />
+      </svg>
+    </span>
   );
 }

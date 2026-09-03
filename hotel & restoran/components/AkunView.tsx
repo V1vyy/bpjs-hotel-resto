@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { PasswordInput } from "@/components/PasswordInput";
 
-export function AkunView({ username }: { username: string }) {
+export function AkunView({ username, password }: { username: string; password: string }) {
   const router = useRouter();
   const inputClass =
     "w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-800 outline-none";
@@ -24,7 +24,7 @@ export function AkunView({ username }: { username: string }) {
         <PasswordInput
           id="sandi"
           name="sandi"
-          value="••••••••"
+          value={password}
           onChange={() => {}}
           readOnly
           className={inputClass}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { FilterDropdown } from "@/components/FilterDropdown";
@@ -22,7 +22,8 @@ export function RestoranExplorer({
   isAdmin?: boolean;
 }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
+const searchParams = useSearchParams();
+const pathname = usePathname();
   const [search, setSearch] = useState(searchParams.get("q") ?? "");
   const debouncedSearch = useDebounce(search);
 
@@ -51,13 +52,13 @@ export function RestoranExplorer({
       : "Beranda Restoran User";
 
   function clearToastFromUrl() {
-    setToast(null);
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete("toast");
-    router.replace(params.size ? `/restoran?${params.toString()}` : "/restoran", {
-      scroll: false,
-    });
-  }
+  setToast(null);
+  const params = new URLSearchParams(searchParams.toString());
+  params.delete("toast");
+  router.replace(params.size ? `${pathname}?${params.toString()}` : pathname, {
+    scroll: false,
+  });
+}
 
   async function handleConfirmDelete() {
     if (!deleting) return;
@@ -85,13 +86,13 @@ export function RestoranExplorer({
         isAdmin={isAdmin}
       />
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 md:px-0">
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 md:px-0 mt-6">
         <h1 className="sr-only">{heading}</h1>
 
         <section className="relative rounded-2xl bg-panel-blue p-4 md:p-6">
           {toast && <SuccessBanner message={toast} onDone={clearToastFromUrl} />}
 
-          <div className="mb-5 flex flex-wrap gap-3">
+          <div className="mb-5 flex flex-wrap justify-center gap-3">
             <FilterDropdown
               label="Makanan"
               value={makanan}
@@ -109,13 +110,13 @@ export function RestoranExplorer({
           {filtered.length === 0 ? (
             <EmptyState />
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
               {filtered.map((resto) => (
                 <ListingCard
                   key={resto.id}
                   nama={resto.nama}
                   gambar={resto.gambar}
-                  rating={resto.rating}
+                  bintang={resto.bintang}
                   googleMapsUrl={resto.googleMapsUrl}
                   onDetail={() => setSelected(resto)}
                 />
@@ -136,14 +137,13 @@ export function RestoranExplorer({
           badges={[
             { label: "Jenis Resto", value: selected.jenisResto },
             { label: "Bintang", value: `${selected.bintang} ★` },
-            { label: "Rating", value: `${selected.rating} / 5` },
           ]}
           telepon={selected.telepon}
           alamat={selected.alamat}
           googleMapsUrl={selected.googleMapsUrl}
           onClose={() => setSelected(null)}
           isAdmin={isAdmin}
-          onEdit={() => router.push(`/tambah-data?type=restoran&id=${selected.id}`)}
+          onEdit={() => router.push(`/admin/tambah-data?type=restoran&id=${selected.id}`)}
           onDelete={() => setDeleting(selected)}
         />
       )}

@@ -9,15 +9,16 @@ import { Logo } from "@/components/Logo";
 import { cn } from "@/lib/utils";
 
 const GUEST_LINKS = [
-  { href: "/", label: "Hotel" },
+  { href: "/hotel", label: "Hotel" },
   { href: "/restoran", label: "Restoran" },
-  { href: "/tambah-data", label: "Tambah Data" },
+  { href: "/ajukan", label: "Ajukan Data" },
 ];
 
 const ADMIN_LINKS = [
-  { href: "/", label: "Hotel" },
-  { href: "/restoran", label: "Restoran" },
-  { href: "/akun", label: "Informasi Akun" },
+  { href: "/admin/hotel", label: "Hotel" },
+  { href: "/admin/restoran", label: "Restoran" },
+  { href: "/admin/pengajuan", label: "Pengajuan" },
+  { href: "/admin/akun", label: "Informasi Akun" },
 ];
 
 export function Header({
@@ -45,9 +46,9 @@ export function Header({
 
   const value = onSearchChange ? searchValue ?? "" : localSearch;
   const links = isAdmin ? ADMIN_LINKS : GUEST_LINKS;
-  const addHref = pathname?.startsWith("/restoran")
-    ? "/tambah-data?type=restoran"
-    : "/tambah-data?type=hotel";
+ const addHref = pathname?.startsWith("/admin/restoran")
+  ? "/admin/tambah-data?type=restoran"
+  : "/admin/tambah-data?type=hotel";
 
   function handleChange(next: string) {
     if (onSearchChange) {
@@ -60,7 +61,9 @@ export function Header({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!onSearchChange) {
-      const base = pathname?.startsWith("/restoran") ? "/restoran" : "/";
+      const base = pathname?.startsWith("/restoran") || pathname?.startsWith("/admin/restoran")
+  ? isAdmin ? "/admin/restoran" : "/restoran"
+  : isAdmin ? "/admin/hotel" : "/hotel";
       router.push(`${base}?q=${encodeURIComponent(value)}`);
     }
   }
@@ -79,10 +82,11 @@ export function Header({
   }
 
   return (
-    <header className="mx-auto flex max-w-5xl items-center gap-4 px-4 py-4 md:px-0">
-      <Link href="/" className="shrink-0" aria-label="Beranda">
-        <Logo />
-      </Link>
+    <header className="sticky top-0 z-40 w-full bg-white">
+    <div className="mx-auto flex max-w-5xl items-center gap-4 px-5 py-4 sm:px-6">
+      <Link href={isAdmin ? "/admin/hotel" : "/hotel"} className="shrink-0" aria-label="Beranda">
+  <Logo size={48} />
+</Link>
 
       {showSearch && (
         <form onSubmit={handleSubmit} className="flex-1">
@@ -109,13 +113,13 @@ export function Header({
       {!showSearch && <div className="flex-1" />}
 
       {isAdmin && (
-        <Link
-          href={addHref}
-          aria-label="Tambah data"
-          className="shrink-0 rounded-full bg-gray-800 p-2 text-white hover:bg-gray-700"
-        >
-          <PlusIcon />
-        </Link>
+      <Link
+        href={addHref}
+        aria-label="Tambah data"
+        className="shrink-0 rounded-full bg-gray-800 p-1.5 text-white hover:bg-gray-700"
+      >
+        <PlusIcon />
+      </Link>
       )}
 
       <div className="relative shrink-0" ref={menuRef}>
@@ -183,7 +187,8 @@ export function Header({
           onConfirm={handleLogout}
         />
       )}
-    </header>
+      </div>
+</header>
   );
 }
 
@@ -206,7 +211,7 @@ function MenuIcon() {
 
 function PlusIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
       <path d="M9 2v14M2 9h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );

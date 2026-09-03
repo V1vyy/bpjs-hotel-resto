@@ -31,3 +31,20 @@ export interface Restoran {
 }
 
 export type EntityKind = "hotel" | "restoran";
+
+
+export interface Pengajuan {
+  id: string;
+  kind: EntityKind;
+  status: "pending";
+  createdAt: string;
+  nama: string;
+  area?: AreaHotel;
+  jenisResto?: JenisResto;
+  jenisMinuman?: JenisMinuman;
+  bintang: number;
+  telepon: string;
+  alamat: string;
+  googleMapsUrl: string;
+  gambar: string;
+}
