@@ -12,6 +12,9 @@ export interface Hotel {
   telepon: string;
   alamat: string;
   googleMapsUrl: string;
+  picNama?: string;
+  picTelepon?: string;
+  website?: string;
 }
 
 export type JenisResto = "Makanan Berat" | "Makanan Ringan";
@@ -28,10 +31,12 @@ export interface Restoran {
   telepon: string;
   alamat: string;
   googleMapsUrl: string;
+  picNama?: string;
+  picTelepon?: string;
+  website?: string;
 }
 
 export type EntityKind = "hotel" | "restoran";
-
 
 export interface Pengajuan {
   id: string;
@@ -47,4 +52,7 @@ export interface Pengajuan {
   alamat: string;
   googleMapsUrl: string;
   gambar: string;
+  picNama: string;
+  picTelepon: string;
+  website?: string;
 }

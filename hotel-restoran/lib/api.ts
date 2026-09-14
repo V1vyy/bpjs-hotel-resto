@@ -95,6 +95,9 @@ export function hotelPayloadFromBody(body: Record<string, unknown>) {
     googleMapsUrl:
       (body.googleMapsUrl as string) ||
       `https://maps.google.com/?q=${encodeURIComponent(nama)}`,
+    picNama: (body.picNama as string) || undefined,
+    picTelepon: (body.picTelepon as string) || undefined,
+    website: (body.website as string) || undefined,
   };
 }
 
@@ -112,6 +115,9 @@ export function restoranPayloadFromBody(body: Record<string, unknown>) {
     googleMapsUrl:
       (body.googleMapsUrl as string) ||
       `https://maps.google.com/?q=${encodeURIComponent(nama)}`,
+    picNama: (body.picNama as string) || undefined,
+    picTelepon: (body.picTelepon as string) || undefined,
+    website: (body.website as string) || undefined,
   };
 }
 
@@ -149,6 +155,9 @@ export async function approvePengajuan(
       telepon: item.telepon,
       alamat: item.alamat,
       googleMapsUrl: item.googleMapsUrl,
+      picNama: item.picNama,
+      picTelepon: item.picTelepon,
+      website: item.website ?? undefined,
     });
   } else {
     result = await addRestoran({
@@ -161,6 +170,9 @@ export async function approvePengajuan(
       telepon: item.telepon,
       alamat: item.alamat,
       googleMapsUrl: item.googleMapsUrl,
+      picNama: item.picNama,
+      picTelepon: item.picTelepon,
+      website: item.website ?? undefined,
     });
   }
 
@@ -191,5 +203,8 @@ export function pengajuanPayloadFromBody(
     alamat: String(body.alamat ?? ""),
     googleMapsUrl: (body.googleMapsUrl as string) || "",
     gambar: (body.gambar as string) || "",
+    picNama: String(body.picNama ?? ""),
+    picTelepon: (body.picTelepon as string) || "-",
+    website: (body.website as string) || undefined,
   };
 }

@@ -8,7 +8,12 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
-
+  if (!body?.picNama || !body?.picTelepon) {
+  return NextResponse.json(
+    { error: "Nama dan telepon PIC/manager wajib diisi" },
+    { status: 400 }
+  );
+}
   if (!body?.nama || !body?.alamat) {
     return NextResponse.json(
       { error: "Nama dan alamat wajib diisi" },

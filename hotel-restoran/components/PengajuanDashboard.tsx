@@ -144,7 +144,7 @@ function PengajuanDetailModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-lg"
+        className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-start justify-between">
@@ -197,6 +197,20 @@ function PengajuanDetailModal({
               {item.googleMapsUrl || "-"}
             </a>
           </Row>
+          <Row label="Nama PIC/Manager">{item.picNama}</Row>
+          <Row label="Telepon PIC/Manager">{item.picTelepon}</Row>
+          {item.website && (
+            <Row label="Website">
+              <a
+                href={item.website}
+                target="_blank"
+                rel="noreferrer"
+                className="break-all text-brand-green underline"
+              >
+                {item.website}
+              </a>
+            </Row>
+          )}
           <Row label="Diajukan pada">
             {new Date(item.createdAt).toLocaleString("id-ID")}
           </Row>

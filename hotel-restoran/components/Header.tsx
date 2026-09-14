@@ -7,6 +7,8 @@ import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Logo } from "@/components/Logo";
 import { cn } from "@/lib/utils";
+import type { Hotel, Restoran } from "@/types";
+import * as XLSX from "xlsx";
 
 const GUEST_LINKS = [
   { href: "/hotel", label: "Hotel" },
@@ -46,9 +48,9 @@ export function Header({
 
   const value = onSearchChange ? searchValue ?? "" : localSearch;
   const links = isAdmin ? ADMIN_LINKS : GUEST_LINKS;
- const addHref = pathname?.startsWith("/admin/restoran")
-  ? "/admin/tambah-data?type=restoran"
-  : "/admin/tambah-data?type=hotel";
+  const addHref = pathname?.startsWith("/admin/restoran")
+    ? "/admin/tambah-data?type=restoran"
+    : "/admin/tambah-data?type=hotel";
 
   function handleChange(next: string) {
     if (onSearchChange) {
@@ -62,8 +64,8 @@ export function Header({
     e.preventDefault();
     if (!onSearchChange) {
       const base = pathname?.startsWith("/restoran") || pathname?.startsWith("/admin/restoran")
-  ? isAdmin ? "/admin/restoran" : "/restoran"
-  : isAdmin ? "/admin/hotel" : "/hotel";
+        ? isAdmin ? "/admin/restoran" : "/restoran"
+        : isAdmin ? "/admin/hotel" : "/hotel";
       router.push(`${base}?q=${encodeURIComponent(value)}`);
     }
   }
@@ -78,6 +80,58 @@ export function Header({
       setMenuOpen(false);
       router.push("/");
       router.refresh();
+    }
+  }
+
+  async function handleExportExcel() {
+    try {
+      const [hotelsRes, restoransRes] = await Promise.all([
+        fetch("/api/hotels"),
+        fetch("/api/restorans"),
+      ]);
+      const hotels: Hotel[] = await hotelsRes.json();
+      const restorans: Restoran[] = await restoransRes.json();
+
+      const hotelRows = hotels.map((h) => ({
+        Nama: h.nama,
+        Area: h.area,
+        Bintang: h.bintang,
+        Rating: h.rating,
+        Telepon: h.telepon,
+        Alamat: h.alamat,
+        "URL Google Maps": h.googleMapsUrl,
+        "Nama PIC/Manager": h.picNama ?? "",
+        "Telepon PIC/Manager": h.picTelepon ?? "",
+        Website: h.website ?? "",
+      }));
+
+      const restoranRows = restorans.map((r) => ({
+        Nama: r.nama,
+        "Jenis Resto": r.jenisResto,
+        "Jenis Minuman": r.jenisMinuman ?? "",
+        Bintang: r.bintang,
+        Rating: r.rating,
+        Telepon: r.telepon,
+        Alamat: r.alamat,
+        "URL Google Maps": r.googleMapsUrl,
+        "Nama PIC/Manager": r.picNama ?? "",
+        "Telepon PIC/Manager": r.picTelepon ?? "",
+        Website: r.website ?? "",
+      }));
+
+      const workbook = XLSX.utils.book_new();
+      const hotelSheet = XLSX.utils.json_to_sheet(hotelRows);
+      const restoranSheet = XLSX.utils.json_to_sheet(restoranRows);
+
+      XLSX.utils.book_append_sheet(workbook, hotelSheet, "Hotel");
+      XLSX.utils.book_append_sheet(workbook, restoranSheet, "Restoran");
+
+      XLSX.writeFile(
+        workbook,
+        `data-hotel-restoran-${new Date().toISOString().slice(0, 10)}.xlsx`
+      );
+    } catch {
+      alert("Gagal mengekspor data.");
     }
   }
 
@@ -157,6 +211,21 @@ export function Header({
                 </li>
               );
             })}
+            {isAdmin && (
+              <li role="none">
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    handleExportExcel();
+                  }}
+                  className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                >
+                  Export Data (Excel)
+                </button>
+              </li>
+            )}
             {isAdmin && (
               <li role="none">
                 <button

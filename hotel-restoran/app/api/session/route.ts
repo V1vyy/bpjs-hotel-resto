@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { ADMIN_USERNAME, ADMIN_PASSWORD } from "@/lib/auth";
+import { verifyAdmin } from "@/lib/auth";
 
 const SESSION_COOKIE = "sips_session";
 
@@ -25,7 +25,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Isi sandi Terlebih dahulu*" }, { status: 400 });
   }
 
-  if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+  const admin = await verifyAdmin(username, password);
+  if (!admin) {
     return NextResponse.json({ error: "Nama atau sandi salah*" }, { status: 401 });
   }
 

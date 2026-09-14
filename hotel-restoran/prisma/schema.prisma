@@ -5,6 +5,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Admin {
+  id       String @id @default(cuid())
+  username String @unique
+  password String
+}
+
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
@@ -21,6 +27,9 @@ model Hotel {
   telepon       String
   alamat        String
   googleMapsUrl String
+  picNama       String?
+  picTelepon    String?
+  website       String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -36,6 +45,9 @@ model Restoran {
   telepon       String
   alamat        String
   googleMapsUrl String
+  picNama       String?
+  picTelepon    String?
+  website       String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -53,5 +65,8 @@ model Pengajuan {
   alamat        String
   googleMapsUrl String
   gambar        String
+  picNama       String
+  picTelepon    String
+  website       String?
   createdAt     DateTime @default(now())
 }

@@ -15,6 +15,9 @@ interface FormState {
   alamat: string;
   googleMapsUrl: string;
   gambar: string;
+  picNama: string;
+  picTelepon: string;
+  website: string;
 }
 
 const EMPTY_FORM: FormState = {
@@ -26,6 +29,9 @@ const EMPTY_FORM: FormState = {
   alamat: "",
   googleMapsUrl: "",
   gambar: "",
+  picNama: "",
+  picTelepon: "",
+  website: "",
 };
 
 const MAX_PHOTO_SIZE = 2 * 1024 * 1024; // 2MB
@@ -100,6 +106,26 @@ export function PengajuanForm() {
         new URL(mapsUrl);
       } catch {
         nextErrors.googleMapsUrl = "URL alamat tidak valid";
+      }
+    }
+
+    if (!form.picNama.trim()) {
+      nextErrors.picNama = "Isi nama PIC/manager terlebih dahulu";
+    }
+
+    const picTeleponDigits = form.picTelepon.trim();
+    if (!picTeleponDigits) {
+      nextErrors.picTelepon = "Isi telepon PIC/manager terlebih dahulu";
+    } else if (!/^\d{7,13}$/.test(picTeleponDigits)) {
+      nextErrors.picTelepon = "Nomor telepon harus 7-13 digit angka";
+    }
+
+    const websiteUrl = form.website.trim();
+    if (websiteUrl) {
+      try {
+        new URL(websiteUrl);
+      } catch {
+        nextErrors.website = "URL website tidak valid";
       }
     }
 
@@ -178,6 +204,20 @@ export function PengajuanForm() {
               {submittedData.googleMapsUrl}
             </a>
           </ReceiptRow>
+          <ReceiptRow label="Nama PIC/Manager">{submittedData.picNama}</ReceiptRow>
+          <ReceiptRow label="Telepon PIC/Manager">{submittedData.picTelepon}</ReceiptRow>
+          {submittedData.website && (
+            <ReceiptRow label="Website">
+              <a
+                href={submittedData.website}
+                target="_blank"
+                rel="noreferrer"
+                className="break-all text-brand-green underline"
+              >
+                {submittedData.website}
+              </a>
+            </ReceiptRow>
+          )}
         </dl>
 
         <button
@@ -290,6 +330,35 @@ export function PengajuanForm() {
           onChange={(v) => updateField("googleMapsUrl", v)}
           placeholder="https://maps.app.goo.gl/..."
           error={errors.googleMapsUrl}
+          className={inputClass}
+          errorClassName={errorInputClass}
+        />
+
+        <FieldInput
+          label="Nama PIC/Manager"
+          value={form.picNama}
+          onChange={(v) => updateField("picNama", v)}
+          error={errors.picNama}
+          className={inputClass}
+          errorClassName={errorInputClass}
+        />
+
+        <FieldInput
+          label="Telepon PIC/Manager"
+          value={form.picTelepon}
+          onChange={(v) => updateField("picTelepon", v)}
+          placeholder="0812 xxxx xxxx"
+          error={errors.picTelepon}
+          className={inputClass}
+          errorClassName={errorInputClass}
+        />
+
+        <FieldInput
+          label={`Website ${kind === "hotel" ? "Hotel" : "Restoran"} (opsional)`}
+          value={form.website}
+          onChange={(v) => updateField("website", v)}
+          placeholder="https://..."
+          error={errors.website}
           className={inputClass}
           errorClassName={errorInputClass}
         />

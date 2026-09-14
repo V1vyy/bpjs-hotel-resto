@@ -135,6 +135,17 @@ const DEFAULT_RESTORANS = [
 ];
 
 async function main() {
+  console.log("Seeding admin...");
+const existingAdmin = await prisma.admin.findUnique({
+  where: { username: "admin" },
+});
+if (!existingAdmin) {
+  await prisma.admin.create({
+    data: { username: "admin", password: "admin123" },
+  });
+}
+
+
   console.log("Seeding hotels...");
   for (const hotel of DEFAULT_HOTELS) {
     await prisma.hotel.create({ data: hotel });

@@ -6,13 +6,15 @@ import { stars } from "@/lib/utils";
 
 export interface DetailModalProps {
   kind: "hotel" | "restoran";
-  title: string; // "Detail hotel" | "Detail Restoran"
+  title: string;
   nama: string;
+  gambar?: string;
   bintang: number;
   badges: { label: string; value: string }[];
   telepon: string;
   alamat: string;
   googleMapsUrl: string;
+  website?: string;
   onClose: () => void;
   isAdmin?: boolean;
   onEdit?: () => void;
@@ -23,11 +25,13 @@ export function DetailModal({
   kind,
   title,
   nama,
+  gambar,
   bintang,
   badges,
   telepon,
   alamat,
   googleMapsUrl,
+  website,
   onClose,
   isAdmin = false,
   onEdit,
@@ -57,8 +61,17 @@ export function DetailModal({
     >
       <div
         ref={ref}
-        className="w-full max-w-md overflow-hidden rounded-xl bg-white shadow-2xl animate-pop-in"
+        className="max-h-[90vh] w-full max-w-md overflow-y-auto overflow-hidden rounded-xl bg-white shadow-2xl animate-pop-in"
       >
+        {gambar ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={gambar} alt={nama} className="h-48 w-full object-cover" />
+        ) : (
+          <div className="flex h-48 w-full items-center justify-center bg-gray-100 text-sm text-gray-400">
+            Tanpa foto
+          </div>
+        )}
+
         <div className="flex items-start justify-between gap-3 p-5">
           <div className="flex items-start gap-3">
             <div className="mt-0.5 rounded-md bg-gray-100 p-2 text-gray-700">
@@ -94,22 +107,37 @@ export function DetailModal({
         <div className="mx-5 my-4 border-t border-gray-100" />
 
         <div className="space-y-4 px-5">
-          <div className="flex items-start gap-3">
-            <PhoneIcon />
-            <div>
-              <p className="text-xs text-gray-500">Telepon</p>
-              <p className="text-sm font-medium text-gray-800">{telepon}</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <PinIcon />
-            <div>
-              <p className="text-xs text-gray-500">Alamat</p>
-              <p className="text-sm font-medium text-gray-800">{alamat}</p>
-            </div>
-          </div>
-        </div>
-
+  <div className="flex items-start gap-3">
+    <PhoneIcon />
+    <div>
+      <p className="text-xs text-gray-500">Telepon</p>
+      <p className="text-sm font-medium text-gray-800">{telepon}</p>
+    </div>
+  </div>
+  <div className="flex items-start gap-3">
+    <PinIcon />
+    <div>
+      <p className="text-xs text-gray-500">Alamat</p>
+      <p className="text-sm font-medium text-gray-800">{alamat}</p>
+    </div>
+  </div>
+  {website && (
+    <div className="flex items-start gap-3">
+      <GlobeIcon />
+      <div>
+        <p className="text-xs text-gray-500">Website</p>
+        <a
+          href={website}
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm font-medium text-brand-green underline break-all"
+        >
+          {website}
+        </a>
+      </div>
+    </div>
+  )}
+</div>
         <div className="space-y-2 p-5 pt-6">
           <a
             href={googleMapsUrl}
@@ -200,6 +228,15 @@ function MapIcon() {
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
       <path d="M6 2L2 3.5v10.5L6 12.5l4 1.5 4-1.5V2.5L10 4 6 2.5" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
       <path d="M6 2v10.5M10 4v10" stroke="currentColor" strokeWidth="1.2" />
+    </svg>
+  );
+}
+
+function GlobeIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="mt-0.5 shrink-0 text-gray-500">
+      <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M2 8h12M8 2c1.8 1.8 1.8 10.2 0 12M8 2c-1.8 1.8-1.8 10.2 0 12" stroke="currentColor" strokeWidth="1.3" />
     </svg>
   );
 }

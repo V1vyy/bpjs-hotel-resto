@@ -83,10 +83,10 @@ export function HotelExplorer({
     <div className="flex min-h-full flex-1 flex-col">
       <Header searchValue={search} onSearchChange={setSearch} isAdmin={isAdmin} />
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 md:px-0 mt-6">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 md:px-8">
         <h1 className="sr-only">{heading}</h1>
 
-        <section className="relative rounded-2xl bg-panel-blue p-4 md:p-6">
+        <section className="relative p-4 md:p-6">
           {toast && <SuccessBanner message={toast} onDone={clearToastFromUrl} />}
 
           <div className="mb-5 flex flex-wrap justify-center gap-3">
@@ -127,23 +127,25 @@ export function HotelExplorer({
       <Footer />
 
       {selected && (
-        <DetailModal
-          kind="hotel"
-          title="Detail hotel"
-          nama={selected.nama}
-          bintang={selected.bintang}
-          badges={[
-            { label: "Area Hotel", value: selected.area },
-            { label: "Bintang", value: `${selected.bintang} ★` },
-          ]}
-          telepon={selected.telepon}
-          alamat={selected.alamat}
-          googleMapsUrl={selected.googleMapsUrl}
-          onClose={() => setSelected(null)}
-          isAdmin={isAdmin}
-          onEdit={() => router.push(`/admin/tambah-data?type=hotel&id=${selected.id}`)}
-          onDelete={() => setDeleting(selected)}
-        />
+       <DetailModal
+  kind="hotel"
+  title="Detail hotel"
+  nama={selected.nama}
+  gambar={selected.gambar}
+  bintang={selected.bintang}
+  badges={[
+    { label: "Area Hotel", value: selected.area },
+    { label: "Bintang", value: `${selected.bintang} ★` },
+  ]}
+  telepon={selected.telepon}
+  alamat={selected.alamat}
+  googleMapsUrl={selected.googleMapsUrl}
+  website={selected.website}
+  onClose={() => setSelected(null)}
+  isAdmin={isAdmin}
+  onEdit={() => router.push(`/admin/tambah-data?type=hotel&id=${selected.id}`)}
+  onDelete={() => setDeleting(selected)}
+/>
       )}
 
       {deleting && (
