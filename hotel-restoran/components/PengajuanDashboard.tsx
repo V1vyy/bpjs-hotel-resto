@@ -211,6 +211,11 @@ function PengajuanDetailModal({
               </a>
             </Row>
           )}
+          {item.keterangan && (
+            <Row label="Keterangan">
+              <span className="whitespace-pre-line">{item.keterangan}</span>
+            </Row>
+          )}
           <Row label="Diajukan pada">
             {new Date(item.createdAt).toLocaleString("id-ID")}
           </Row>

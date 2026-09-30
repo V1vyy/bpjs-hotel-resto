@@ -15,6 +15,7 @@ export interface DetailModalProps {
   alamat: string;
   googleMapsUrl: string;
   website?: string;
+  keterangan?: string;
   onClose: () => void;
   isAdmin?: boolean;
   onEdit?: () => void;
@@ -32,6 +33,7 @@ export function DetailModal({
   alamat,
   googleMapsUrl,
   website,
+  keterangan,
   onClose,
   isAdmin = false,
   onEdit,
@@ -107,37 +109,49 @@ export function DetailModal({
         <div className="mx-5 my-4 border-t border-gray-100" />
 
         <div className="space-y-4 px-5">
-  <div className="flex items-start gap-3">
-    <PhoneIcon />
-    <div>
-      <p className="text-xs text-gray-500">Telepon</p>
-      <p className="text-sm font-medium text-gray-800">{telepon}</p>
-    </div>
-  </div>
-  <div className="flex items-start gap-3">
-    <PinIcon />
-    <div>
-      <p className="text-xs text-gray-500">Alamat</p>
-      <p className="text-sm font-medium text-gray-800">{alamat}</p>
-    </div>
-  </div>
-  {website && (
-    <div className="flex items-start gap-3">
-      <GlobeIcon />
-      <div>
-        <p className="text-xs text-gray-500">Website</p>
-        <a
-          href={website}
-          target="_blank"
-          rel="noreferrer"
-          className="text-sm font-medium text-brand-green underline break-all"
-        >
-          {website}
-        </a>
-      </div>
-    </div>
-  )}
-</div>
+          <div className="flex items-start gap-3">
+            <PhoneIcon />
+            <div>
+              <p className="text-xs text-gray-500">Telepon</p>
+              <p className="text-sm font-medium text-gray-800">{telepon}</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <PinIcon />
+            <div>
+              <p className="text-xs text-gray-500">Alamat</p>
+              <p className="text-sm font-medium text-gray-800">{alamat}</p>
+            </div>
+          </div>
+          {website && (
+            <div className="flex items-start gap-3">
+              <GlobeIcon />
+              <div>
+                <p className="text-xs text-gray-500">Website</p>
+                <a
+                  href={website}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="break-all text-sm font-medium text-brand-green underline"
+                >
+                  {website}
+                </a>
+              </div>
+            </div>
+          )}
+          {keterangan && (
+            <div className="flex items-start gap-3">
+              <NoteIcon />
+              <div>
+                <p className="text-xs text-gray-500">Keterangan</p>
+                <p className="whitespace-pre-line text-sm font-medium text-gray-800">
+                  {keterangan}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
         <div className="space-y-2 p-5 pt-6">
           <a
             href={googleMapsUrl}
@@ -237,6 +251,15 @@ function GlobeIcon() {
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="mt-0.5 shrink-0 text-gray-500">
       <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.3" />
       <path d="M2 8h12M8 2c1.8 1.8 1.8 10.2 0 12M8 2c-1.8 1.8-1.8 10.2 0 12" stroke="currentColor" strokeWidth="1.3" />
+    </svg>
+  );
+}
+
+function NoteIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="mt-0.5 shrink-0 text-gray-500">
+      <rect x="3" y="2" width="10" height="12" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M5.5 5.5h5M5.5 8h5M5.5 10.5h3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
     </svg>
   );
 }

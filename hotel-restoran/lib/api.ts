@@ -98,6 +98,7 @@ export function hotelPayloadFromBody(body: Record<string, unknown>) {
     picNama: (body.picNama as string) || undefined,
     picTelepon: (body.picTelepon as string) || undefined,
     website: (body.website as string) || undefined,
+    keterangan: String(body.keterangan ?? "").trim(),
   };
 }
 
@@ -118,6 +119,7 @@ export function restoranPayloadFromBody(body: Record<string, unknown>) {
     picNama: (body.picNama as string) || undefined,
     picTelepon: (body.picTelepon as string) || undefined,
     website: (body.website as string) || undefined,
+    keterangan: String(body.keterangan ?? "").trim(),
   };
 }
 
@@ -158,6 +160,7 @@ export async function approvePengajuan(
       picNama: item.picNama,
       picTelepon: item.picTelepon,
       website: item.website ?? undefined,
+      keterangan: item.keterangan ?? "",
     });
   } else {
     result = await addRestoran({
@@ -173,6 +176,7 @@ export async function approvePengajuan(
       picNama: item.picNama,
       picTelepon: item.picTelepon,
       website: item.website ?? undefined,
+      keterangan: item.keterangan ?? "",
     });
   }
 
@@ -206,5 +210,6 @@ export function pengajuanPayloadFromBody(
     picNama: String(body.picNama ?? ""),
     picTelepon: (body.picTelepon as string) || "-",
     website: (body.website as string) || undefined,
+    keterangan: String(body.keterangan ?? "").trim(),
   };
 }

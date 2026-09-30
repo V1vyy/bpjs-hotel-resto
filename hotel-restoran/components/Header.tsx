@@ -103,6 +103,7 @@ export function Header({
         "Nama PIC/Manager": h.picNama ?? "",
         "Telepon PIC/Manager": h.picTelepon ?? "",
         Website: h.website ?? "",
+        Keterangan: h.keterangan ?? "",
       }));
 
       const restoranRows = restorans.map((r) => ({
@@ -117,6 +118,7 @@ export function Header({
         "Nama PIC/Manager": r.picNama ?? "",
         "Telepon PIC/Manager": r.picTelepon ?? "",
         Website: r.website ?? "",
+        Keterangan: r.keterangan ?? "",
       }));
 
       const workbook = XLSX.utils.book_new();
@@ -166,16 +168,6 @@ export function Header({
 
       {!showSearch && <div className="flex-1" />}
 
-      {isAdmin && (
-      <Link
-        href={addHref}
-        aria-label="Tambah data"
-        className="shrink-0 rounded-full bg-gray-800 p-1.5 text-white hover:bg-gray-700"
-      >
-        <PlusIcon />
-      </Link>
-      )}
-
       <div className="relative shrink-0" ref={menuRef}>
         <button
           type="button"
@@ -191,8 +183,21 @@ export function Header({
         {menuOpen && (
           <ul
             role="menu"
-            className="absolute right-0 z-30 mt-2 w-44 overflow-hidden rounded-lg border border-gray-100 bg-white py-1 shadow-lg animate-pop-in"
+            className="absolute right-0 z-30 mt-2 w-48 overflow-hidden rounded-lg border border-gray-100 bg-white py-1 shadow-lg animate-pop-in"
           >
+            {isAdmin && (
+              <li role="none">
+                <Link
+                  href={addHref}
+                  role="menuitem"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                >
+                  <PlusIcon />
+                  Tambah Data
+                </Link>
+              </li>
+            )}
             {links.map((link) => {
               const active = pathname === link.href;
               return (

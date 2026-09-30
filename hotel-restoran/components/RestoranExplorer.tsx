@@ -22,8 +22,8 @@ export function RestoranExplorer({
   isAdmin?: boolean;
 }) {
   const router = useRouter();
-const searchParams = useSearchParams();
-const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [search, setSearch] = useState(searchParams.get("q") ?? "");
   const debouncedSearch = useDebounce(search);
 
@@ -52,13 +52,13 @@ const pathname = usePathname();
       : "Beranda Restoran User";
 
   function clearToastFromUrl() {
-  setToast(null);
-  const params = new URLSearchParams(searchParams.toString());
-  params.delete("toast");
-  router.replace(params.size ? `${pathname}?${params.toString()}` : pathname, {
-    scroll: false,
-  });
-}
+    setToast(null);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("toast");
+    router.replace(params.size ? `${pathname}?${params.toString()}` : pathname, {
+      scroll: false,
+    });
+  }
 
   async function handleConfirmDelete() {
     if (!deleting) return;
@@ -130,24 +130,25 @@ const pathname = usePathname();
 
       {selected && (
         <DetailModal
-  kind="restoran"
-  title="Detail Restoran"
-  nama={selected.nama}
-  gambar={selected.gambar}
-  bintang={selected.bintang}
-  badges={[
-    { label: "Jenis Resto", value: selected.jenisResto },
-    { label: "Bintang", value: `${selected.bintang} ★` },
-  ]}
-  telepon={selected.telepon}
-  alamat={selected.alamat}
-  googleMapsUrl={selected.googleMapsUrl}
-  website={selected.website}
-  onClose={() => setSelected(null)}
-  isAdmin={isAdmin}
-  onEdit={() => router.push(`/admin/tambah-data?type=restoran&id=${selected.id}`)}
-  onDelete={() => setDeleting(selected)}
-/>
+          kind="restoran"
+          title="Detail Restoran"
+          nama={selected.nama}
+          gambar={selected.gambar}
+          bintang={selected.bintang}
+          badges={[
+            { label: "Jenis Resto", value: selected.jenisResto },
+            { label: "Bintang", value: `${selected.bintang} ★` },
+          ]}
+          telepon={selected.telepon}
+          alamat={selected.alamat}
+          googleMapsUrl={selected.googleMapsUrl}
+          website={selected.website}
+          keterangan={selected.keterangan}
+          onClose={() => setSelected(null)}
+          isAdmin={isAdmin}
+          onEdit={() => router.push(`/admin/tambah-data?type=restoran&id=${selected.id}`)}
+          onDelete={() => setDeleting(selected)}
+        />
       )}
 
       {deleting && (

@@ -15,6 +15,7 @@ export interface Hotel {
   picNama?: string;
   picTelepon?: string;
   website?: string;
+  keterangan?: string;
 }
 
 export type JenisResto = "Makanan Berat" | "Makanan Ringan";
@@ -34,6 +35,7 @@ export interface Restoran {
   picNama?: string;
   picTelepon?: string;
   website?: string;
+  keterangan?: string;
 }
 
 export type EntityKind = "hotel" | "restoran";
@@ -55,4 +57,5 @@ export interface Pengajuan {
   picNama: string;
   picTelepon: string;
   website?: string;
+  keterangan?: string;
 }

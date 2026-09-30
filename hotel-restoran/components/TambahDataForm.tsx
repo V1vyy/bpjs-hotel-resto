@@ -19,6 +19,7 @@ interface FormState {
   picNama: string;
   picTelepon: string;
   website: string;
+  keterangan: string;
 }
 
 const EMPTY_FORM: FormState = {
@@ -33,9 +34,11 @@ const EMPTY_FORM: FormState = {
   picNama: "",
   picTelepon: "",
   website: "",
+  keterangan: "",
 };
 
 const MAX_PHOTO_SIZE = 2 * 1024 * 1024; // 2MB
+const MAX_KETERANGAN = 500;
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
 
 export function TambahDataForm() {
@@ -76,6 +79,7 @@ export function TambahDataForm() {
           picNama: data.picNama ?? "",
           picTelepon: data.picTelepon ?? "",
           website: data.website ?? "",
+          keterangan: data.keterangan ?? "",
         });
       })
       .finally(() => setLoadingRecord(false));
@@ -163,6 +167,10 @@ export function TambahDataForm() {
       } catch {
         nextErrors.website = "URL website tidak valid";
       }
+    }
+
+    if (form.keterangan.length > MAX_KETERANGAN) {
+      nextErrors.keterangan = `Keterangan maksimal ${MAX_KETERANGAN} karakter`;
     }
 
     setErrors(nextErrors);
@@ -349,6 +357,17 @@ export function TambahDataForm() {
             errorClassName={errorInputClass}
           />
 
+          <TextareaField
+            label="Keterangan (opsional)"
+            value={form.keterangan}
+            onChange={(v) => updateField("keterangan", v)}
+            placeholder="Contoh: fasilitas, jam operasional, atau info tambahan lainnya"
+            error={errors.keterangan}
+            maxLength={MAX_KETERANGAN}
+            className={inputClass}
+            errorClassName={errorInputClass}
+          />
+
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">Unggah Foto</label>
             <input
@@ -482,6 +501,49 @@ function Field({
           {...rest}
         />
       </ErrorTooltip>
+    </div>
+  );
+}
+
+function TextareaField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  error,
+  maxLength,
+  className,
+  errorClassName,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  error?: string;
+  maxLength: number;
+  className?: string;
+  errorClassName?: string;
+}) {
+  return (
+    <div>
+      <label className="mb-1 block text-sm font-medium text-gray-700">{label}</label>
+      <ErrorTooltip message={error}>
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          rows={4}
+          className={cn(className, "resize-y", error && errorClassName)}
+        />
+      </ErrorTooltip>
+      <p
+        className={cn(
+          "mt-1 text-right text-xs text-gray-400",
+          value.length > maxLength && "text-red-500"
+        )}
+      >
+        {value.length}/{maxLength}
+      </p>
     </div>
   );
 }

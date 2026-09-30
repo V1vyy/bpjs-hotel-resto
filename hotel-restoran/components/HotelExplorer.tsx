@@ -56,11 +56,11 @@ export function HotelExplorer({
       : "Beranda Hotel User";
 
   function clearToastFromUrl() {
-  setToast(null);
-  const params = new URLSearchParams(searchParams.toString());
-  params.delete("toast");
-  router.replace(params.size ? `${pathname}?${params.toString()}` : pathname, { scroll: false });
-}
+    setToast(null);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("toast");
+    router.replace(params.size ? `${pathname}?${params.toString()}` : pathname, { scroll: false });
+  }
 
   async function handleConfirmDelete() {
     if (!deleting) return;
@@ -127,25 +127,26 @@ export function HotelExplorer({
       <Footer />
 
       {selected && (
-       <DetailModal
-  kind="hotel"
-  title="Detail hotel"
-  nama={selected.nama}
-  gambar={selected.gambar}
-  bintang={selected.bintang}
-  badges={[
-    { label: "Area Hotel", value: selected.area },
-    { label: "Bintang", value: `${selected.bintang} ★` },
-  ]}
-  telepon={selected.telepon}
-  alamat={selected.alamat}
-  googleMapsUrl={selected.googleMapsUrl}
-  website={selected.website}
-  onClose={() => setSelected(null)}
-  isAdmin={isAdmin}
-  onEdit={() => router.push(`/admin/tambah-data?type=hotel&id=${selected.id}`)}
-  onDelete={() => setDeleting(selected)}
-/>
+        <DetailModal
+          kind="hotel"
+          title="Detail hotel"
+          nama={selected.nama}
+          gambar={selected.gambar}
+          bintang={selected.bintang}
+          badges={[
+            { label: "Area Hotel", value: selected.area },
+            { label: "Bintang", value: `${selected.bintang} ★` },
+          ]}
+          telepon={selected.telepon}
+          alamat={selected.alamat}
+          googleMapsUrl={selected.googleMapsUrl}
+          website={selected.website}
+          keterangan={selected.keterangan}
+          onClose={() => setSelected(null)}
+          isAdmin={isAdmin}
+          onEdit={() => router.push(`/admin/tambah-data?type=hotel&id=${selected.id}`)}
+          onDelete={() => setDeleting(selected)}
+        />
       )}
 
       {deleting && (

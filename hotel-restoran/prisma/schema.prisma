@@ -30,6 +30,7 @@ model Hotel {
   picNama       String?
   picTelepon    String?
   website       String?
+  keterangan    String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -48,6 +49,7 @@ model Restoran {
   picNama       String?
   picTelepon    String?
   website       String?
+  keterangan    String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -68,5 +70,6 @@ model Pengajuan {
   picNama       String
   picTelepon    String
   website       String?
+  keterangan    String?
   createdAt     DateTime @default(now())
 }

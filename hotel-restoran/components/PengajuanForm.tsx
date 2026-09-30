@@ -18,6 +18,7 @@ interface FormState {
   picNama: string;
   picTelepon: string;
   website: string;
+  keterangan: string;
 }
 
 const EMPTY_FORM: FormState = {
@@ -32,9 +33,11 @@ const EMPTY_FORM: FormState = {
   picNama: "",
   picTelepon: "",
   website: "",
+  keterangan: "",
 };
 
 const MAX_PHOTO_SIZE = 2 * 1024 * 1024; // 2MB
+const MAX_KETERANGAN = 500;
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
 
 export function PengajuanForm() {
@@ -129,6 +132,10 @@ export function PengajuanForm() {
       }
     }
 
+    if (form.keterangan.length > MAX_KETERANGAN) {
+      nextErrors.keterangan = `Keterangan maksimal ${MAX_KETERANGAN} karakter`;
+    }
+
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   }
@@ -216,6 +223,11 @@ export function PengajuanForm() {
               >
                 {submittedData.website}
               </a>
+            </ReceiptRow>
+          )}
+          {submittedData.keterangan && (
+            <ReceiptRow label="Keterangan">
+              <span className="whitespace-pre-line">{submittedData.keterangan}</span>
             </ReceiptRow>
           )}
         </dl>
@@ -363,6 +375,17 @@ export function PengajuanForm() {
           errorClassName={errorInputClass}
         />
 
+        <FieldTextarea
+          label="Keterangan (opsional)"
+          value={form.keterangan}
+          onChange={(v) => updateField("keterangan", v)}
+          placeholder="Contoh: fasilitas, jam operasional, atau info tambahan lainnya"
+          error={errors.keterangan}
+          maxLength={MAX_KETERANGAN}
+          className={inputClass}
+          errorClassName={errorInputClass}
+        />
+
         <div>
           <label className="mb-1 block text-sm font-medium text-gray-700">Unggah Foto</label>
           <input
@@ -456,6 +479,45 @@ function FieldInput({
         className={cn(className, error && errorClassName)}
       />
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+    </div>
+  );
+}
+
+function FieldTextarea({
+  label,
+  value,
+  onChange,
+  placeholder,
+  error,
+  maxLength,
+  className,
+  errorClassName,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  error?: string;
+  maxLength: number;
+  className?: string;
+  errorClassName?: string;
+}) {
+  return (
+    <div>
+      <label className="mb-1 block text-sm font-medium text-gray-700">{label}</label>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        rows={4}
+        className={cn(className, "resize-y", error && errorClassName)}
+      />
+      <div className="mt-1 flex justify-between text-xs">
+        <span className="text-red-500">{error}</span>
+        <span className={cn("text-gray-400", value.length > maxLength && "text-red-500")}>
+          {value.length}/{maxLength}
+        </span>
+      </div>
     </div>
   );
 }
