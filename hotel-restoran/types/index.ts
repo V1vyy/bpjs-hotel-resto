@@ -1,4 +1,4 @@
-export type AreaHotel = "Dalam Kota" | "Selatan" | "Barat" | "Utara" | "Luar Yogyakarta";
+export type AreaHotel = "Dalam Kota" | "Timur" | "Selatan" | "Barat" | "Utara" | "Luar Yogyakarta";
 
 export type StarRating = 1 | 2 | 3 | 4 | 5;
 

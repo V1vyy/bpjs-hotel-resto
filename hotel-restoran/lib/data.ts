@@ -166,7 +166,7 @@ globalForData.__restorans = restorans;
 export const pengajuans: Pengajuan[] = globalForData.__pengajuans ?? [];
 globalForData.__pengajuans = pengajuans;
 
-export const areaOptions = ["Dalam Kota", "Selatan", "Barat", "Utara", "Luar Yogyakarta"] as const;
+export const areaOptions = ["Dalam Kota","Timur", "Selatan", "Barat", "Utara", "Luar Yogyakarta"] as const;
 export const bintangOptions = [5, 4, 3, 2, 1] as const;
 export const makananOptions = ["Makanan Berat", "Makanan Ringan"] as const;
 export const minumanOptions = ["Hangat", "Dingin"] as const;
