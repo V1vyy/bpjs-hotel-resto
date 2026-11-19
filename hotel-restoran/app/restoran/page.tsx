@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { getRestorans } from "@/lib/api";
 import { RestoranExplorer } from "@/components/RestoranExplorer";
 
+export const dynamic = "force-dynamic";
+
 export default async function RestoranHomePage() {
   const restorans = await getRestorans();
 
